@@ -1,4 +1,4 @@
-f = open("test_input.txt")
+f = open("custom_input.txt")
 lines: list[str] = f.readlines()
 
 class Dial:
@@ -7,22 +7,24 @@ class Dial:
         self.number_of_zeros: int = 0
 
     def dial_change(self, direction: str, change: int):
-            if direction == "L":
-                difference: int = self.position - change
-                if difference < 0:
-                    self.position = (difference % 100)
-                else:
-                    self.position = difference
-
-            if direction == "R":
-                difference: int = self.position + change
-                if difference > 99:
-                    self.position = (difference % 100)
-                else:
-                    self.position = difference
-
+        wraps: int = 0
+        if direction == "L":
+            difference: int = self.position - change
             if self.position == 0:
-                self.number_of_zeros += 1
+                wraps = change // 100
+            else:
+                wraps = (change - self.position + 99) // 100
+            self.position = (difference % 100)
+            self.number_of_zeros += wraps
+
+        if direction == "R":
+            difference: int = self.position + change
+            wraps = (self.position + change) // 100
+            self.position = (difference % 100)
+            self.number_of_zeros += wraps
+
+        if wraps == 0 and self.position == 0:
+            self.number_of_zeros += 1
 
 dial = Dial(50)
 
